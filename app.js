@@ -9,13 +9,19 @@ const fileUpload = require("express-fileupload");
 const helmet = require('helmet');
 const xss = require('xss-clean');
 const cors = require('cors');
+const cloudinary = require("cloudinary");
+
 app.use(express.json());
 app.use(
     fileUpload({
       useTempFiles: true,
     })
   );
-  
+  cloudinary.config({
+    cloud_name:process.env.CLOUD_NAME,
+    api_key:process.env.CLOUD_API_KEY,
+    api_secret:process.env.CLOUD_API_SECRT
+  })
 //connect to Database
 const connectDB = require('./db/connect');
 
