@@ -19,6 +19,7 @@ const register = async (req, res) => {
           age: user.age,
           gender: user.gender,
           country: user.country,
+          state: user.state,
           fav: user.fav,
           role: user.role,
           avatar: user.avatar,
@@ -39,6 +40,7 @@ const register = async (req, res) => {
         age: req.body.age,
         gender: req.body.gender,
         country: req.body.country,
+        state: user.state,
         fav: req.body.fav,
         role: req.body.role,
         avatar: {
@@ -56,6 +58,7 @@ const register = async (req, res) => {
           age: user.age,
           gender: user.gender,
           country: user.country,
+          state: user.state,
           fav: user.fav,
           role: user.role,
           avatar: user.avatar,
@@ -92,9 +95,10 @@ const login = async (req, res) => {
       age: user.age,
       gender: user.gender,
       country: user.country,
+      state: user.state,
       fav: user.fav,
       role: user.role,
-      // profilePic: user.profilePic
+      avatar: user.avatar
     },
     token,
   });

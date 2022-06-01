@@ -42,6 +42,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please provide country']
     },
+    state: {
+        type: String,
+        required: [true, 'Please provide state']
+    },
     fav: {
         type: String,
         required: [true, 'Please provide fav']
