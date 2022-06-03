@@ -119,6 +119,24 @@ const getSingleUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ user });
 };
 
+//updata user name
+const updatePassword = async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  if (!oldPassword || !newPassword) {
+      throw new CustomError.BadRequestError('Please provide all values');
+  }
+  const user = await User.findOne({ _id: req.params.id });
+
+  const isPasswordCorrect = await user.comparePassword(oldPassword);
+  if (!isPasswordCorrect) {
+      throw new CustomError.UnauthenticatedError('Invalid Credentials');
+  }
+  user.password = newPassword;
+  await user.save();
+  const token = user.createJWT(user);
+  res.status(StatusCodes.OK).json({msg: 'password updated', token })
+};
+
 //delete user
 const deleteUser = async (req, res) => {
   const user = await User.findByIdAndDelete({ _id: req.params.id });
@@ -130,5 +148,6 @@ module.exports = {
   login,
   getAllUsers,
   getSingleUser,
+  updatePassword,
   deleteUser,
 };
