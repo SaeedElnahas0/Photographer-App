@@ -3,19 +3,17 @@ const jwt = require('jsonwebtoken')
 const { UnauthenticatedError } = require('../errors')
 
 const auth = async (req, res, next) => {
-    // check header
-    const authHeader = req.headers.authorization
-    if (!authHeader || !authHeader.startsWith('Bearer')) {
-        throw new UnauthenticatedError('Authentication invalid')
-    }
-    const token = authHeader.split(' ')[1]
-
     try {
-        const payload = jwt.verify(token, process.env.JWT_SECRET)
-        req.user = { userId: payload.userId, name: payload.name }
-        next()
+        const token=req.header("Authorization")
+        if(!token) return res.status(401).json({msg:"INVALID authentication"})
+        jwt.verify(token,process.env.JWT_SECRET,async(err,user)=>{
+            if(err) return res.status(400).json({msg:"INVALID authentication"})
+            req.user=await User.findById(user.userId) // to used in get user in UserCtrl.js in function getUser
+            
+            next()
+        })
     } catch (error) {
-        throw new UnauthenticatedError('Authentication invalid')
+        return res.status(400).json({msg:error.message})
     }
 }
 
