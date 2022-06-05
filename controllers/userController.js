@@ -232,8 +232,8 @@ const forgetPassword = async (req, res) => {
   // Get ResetPassword Token
   const resetToken = user.getRestPasswordToken();
   await user.save({ validateBeforeSave: false });
-console.log(req.protocol)
-  const resetPasswordUrl = `${req.protocol}://${req.get("host" )}/api/v1/reset/${resetToken}`;
+console.log(req.get(host))
+  const resetPasswordUrl = `${req.protocol}://${req.get("host")}/api/v1/reset/${resetToken}`;
 
   
   const message = `Your Password  reset token is :- \n\n${resetPasswordUrl} \n\nIf you are not require this email then ,Please Ignore IT`;
@@ -247,7 +247,7 @@ console.log(req.protocol)
     res.status(200).json({
       success: true,
       message: `Email send to ${user.email} Successfuly`,
-      proto: req.protocol
+      resetPassword:"resetpassword"
     });
   } catch (error) {
     user.resetPasswordToken = undefined; // to prevent user to make two change just one change
