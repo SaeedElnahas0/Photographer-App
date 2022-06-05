@@ -247,6 +247,7 @@ console.log(req.protocol)
     res.status(200).json({
       success: true,
       message: `Email send to ${user.email} Successfuly`,
+      proto: req.protocol
     });
   } catch (error) {
     user.resetPasswordToken = undefined; // to prevent user to make two change just one change
