@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator'); // handle input data validation
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto=require('crypto');
 
 const userSchema = new mongoose.Schema({
     firstName: {
@@ -67,7 +68,9 @@ const userSchema = new mongoose.Schema({
             default: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
         }
         
-    }
+    },
+    resetPasswordToken:String,
+    resetPasswordExpire:Date,
 });
 
 //pre middleware executed one after another when each middleware calls
@@ -90,6 +93,16 @@ userSchema.methods.createJWT = function () {
 userSchema.methods.comparePassword = async function (canditatePassword) {
     const isMatch = await bcrypt.compare(canditatePassword, this.password)
     return isMatch
+}
+
+//Generate password reset token
+userSchema.methods.getRestPasswordToken=function(){
+    //Generate Token
+    const resetToken =crypto.randomBytes(20).toString("hex"); //like that 9341e20bff6b7dba15845c54bddb2c95bb66c137
+    //Hashing and adding resetpasswordToken to userSchema
+    this.resetPasswordToken=crypto.createHash("sha256").update(resetToken).digest("hex")
+    this.resetPasswordExpire=Date.now() + 15*60*1000;
+    return resetToken
 }
 
 

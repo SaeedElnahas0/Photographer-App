@@ -3,6 +3,7 @@ const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 const cloudinary = require("cloudinary");
+const sendEmail = require("../errors/sendEmail");
 
 //signup register
 const register = async (req, res) => {
@@ -223,6 +224,38 @@ const updatePassword = async (req, res) => {
   res.status(StatusCodes.OK).json({msg: 'password updated', token })
 };
 
+// forget Password
+const forgetPassword = async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email: email });
+  if (!user) return res.status(500).json({ msg: "User Not Found" });
+  // Get ResetPassword Token
+  const resetToken = user.getRestPasswordToken();
+  await user.save({ validateBeforeSave: false });
+console.log(req.protocol)
+  const resetPasswordUrl = `${req.protocol}://${req.get("host" )}/api/v1/reset/${resetToken}`;
+
+  
+  const message = `Your Password  reset token is :- \n\n${resetPasswordUrl} \n\nIf you are not require this email then ,Please Ignore IT`;
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "Photographer Password Recovery",
+      message,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: `Email send to ${user.email} Successfuly`,
+    });
+  } catch (error) {
+    user.resetPasswordToken = undefined; // to prevent user to make two change just one change
+    user.resetPasswordExpire = undefined; // to prevent user to make two change just one change
+    await user.save({ validateBeforeSave: false });
+    return res.status(500).json({ msg: error.message });
+  }
+};
+
 //delete user
 const deleteUser = async (req, res) => {
   const user = await User.findByIdAndDelete({ _id: req.params.id });
@@ -236,5 +269,6 @@ module.exports = {
   getSingleUser,
   updateProfile,
   updatePassword,
+  forgetPassword,
   deleteUser,
 };

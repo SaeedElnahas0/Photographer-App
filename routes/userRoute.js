@@ -8,6 +8,7 @@ const {
     getSingleUser,
     updateProfile,
     updatePassword,
+    forgetPassword,
     deleteUser
 } = require('../controllers/userController');
 
@@ -17,6 +18,7 @@ router.get('/', getAllUsers);
 router.get('/:id', getSingleUser);
 router.patch('/updateprofile', auth, updateProfile);
 router.patch('/updatepassword/:id',  updatePassword);
+router.post('/forgetpassword',  forgetPassword);
 router.delete('/:id', deleteUser);
 
 module.exports = router;
