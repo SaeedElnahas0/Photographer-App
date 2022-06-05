@@ -200,6 +200,7 @@ const updateProfile = async (req, res) => {
           state: user.state,
           fav: user.fav,
           role: user.role,
+          avatar: user.avatar
       }, token 
   })
 };
