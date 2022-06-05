@@ -232,7 +232,6 @@ const forgetPassword = async (req, res) => {
   // Get ResetPassword Token
   const resetToken = user.getRestPasswordToken();
   await user.save({ validateBeforeSave: false });
-console.log(req.get(host))
   const resetPasswordUrl = `${req.protocol}://${req.get("host")}/api/v1/reset/${resetToken}`;
 
   
