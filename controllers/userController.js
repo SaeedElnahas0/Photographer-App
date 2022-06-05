@@ -120,91 +120,89 @@ const getSingleUser = async (req, res) => {
 };
 
 //update User Profile
-const updateProfile = async (req, res) => {
-  var token;
-  try {
-    const newUserData = {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        age: req.body.age,
-        gender: req.body.gender,
-        country: req.body.country,
-        state: req.body.state,
-        fav: req.body.fav,
-        role: req.body.role,
-    };
-    if (req.body.avatar !== "") {
-      const user = await User.findById(req.user._id);
-      token = user.createJWT();
-      const imageId = user.avatar.public_id;
+// const updateProfile = async (req, res) => {
+//   var token;
+//   try {
+//     const newUserData = {
+//         firstName: req.body.firstName,
+//         lastName: req.body.lastName,
+//         email: req.body.email,
+//         age: req.body.age,
+//         gender: req.body.gender,
+//         country: req.body.country,
+//         state: req.body.state,
+//         fav: req.body.fav,
+//         role: req.body.role,
+//     };
+//     if (req.body.avatar !== "") {
+//       const user = await User.findById(req.user._id);
+//       token = user.createJWT();
+//       const imageId = user.avatar.public_id;
   
-      await cloudinary.v2.uploader.destroy(imageId);
+//       await cloudinary.v2.uploader.destroy(imageId);
   
-      const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-        folder: "photographer-avatar",
-        width: 150,
-        crop: "scale",
-      });
-      newUserData.avatar = {
-        public_id: myCloud.public_id,
-        url: myCloud.secure_url,
-      };
-    }
+//       const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+//         folder: "photographer-avatar",
+//         width: 150,
+//         crop: "scale",
+//       });
+//       newUserData.avatar = {
+//         public_id: myCloud.public_id,
+//         url: myCloud.secure_url,
+//       };
+//     }
   
-    const userupdate = await User.findByIdAndUpdate(req.user._id,newUserData, {
-      new: true,
-      runValidators: true,
-      useFindAndModify: false,
-    });
+//     const userupdate = await User.findByIdAndUpdate(req.user._id,newUserData, {
+//       new: true,
+//       runValidators: true,
+//       useFindAndModify: false,
+//     });
 
-    return res.status(200).json({ msg: "Updated Profile",success:true ,user:userupdate, token});
-  } catch (error) {
-    return res.status(500).json({ msg: error.message });
-  }
-};
+//     return res.status(200).json({ msg: "Updated Profile",success:true ,user:userupdate, token});
+//   } catch (error) {
+//     return res.status(500).json({ msg: error.message });
+//   }
+// };
 
 //updata user data
-// const updateProfile = async (req, res) => {
-//   const { firstName, lastName, email, age, gender, country, state, fav, role, avatar } = req.body;
+const updateProfile = async (req, res) => {
+  const { firstName, lastName, email, age, gender, country, state, fav, role } = req.body;
   
-//   if (!firstName || !lastName || !email || !age || !gender || !country || !state || !fav || !role || !avatar) {
-//       throw new CustomError.BadRequestError('Please provide all values');
-//   }
-//   const user = await User.findOne({ _id: req.params.id });
+  if (!firstName || !lastName || !email || !age || !gender || !country || !state || !fav || !role) {
+      throw new CustomError.BadRequestError('Please provide all values');
+  }
+  const user = await User.findOne(req.user._id);
 
-//   if(!user) return res.status(404).json({msg: "No User Exist"})
+  if(!user) return res.status(404).json({msg: "No User Exist"})
 
-//   user.firstName = firstName;
-//   user.lastName = lastName;
-//   user.email = email;
-//   user.age = age;
-//   user.gender = gender;
-//   user.country = country;
-//   user.state = state;
-//   user.fav = fav;
-//   user.role = role;
-//   user.avatar = avatar;
+  user.firstName = firstName;
+  user.lastName = lastName;
+  user.email = email;
+  user.age = age;
+  user.gender = gender;
+  user.country = country;
+  user.state = state;
+  user.fav = fav;
+  user.role = role;
 
-//   await user.save();
+  await user.save();
 
-//   const token = user.createJWT(user);
-//   res.status(StatusCodes.OK).json({
-//       user: { 
-//           id: user._id, 
-//           firstName: user.firstName, 
-//           lastName: user.lastName, 
-//           email: user.email, 
-//           age: user.age, 
-//           gender: user.gender, 
-//           country: user.country, 
-//           state: user.state,
-//           fav: user.fav,
-//           role: user.role,
-//           avatar: user.avatar  
-//       }, token 
-//   })
-// };
+  const token = user.createJWT(user);
+  res.status(StatusCodes.OK).json({
+      user: { 
+          id: user._id, 
+          firstName: user.firstName, 
+          lastName: user.lastName, 
+          email: user.email, 
+          age: user.age, 
+          gender: user.gender, 
+          country: user.country, 
+          state: user.state,
+          fav: user.fav,
+          role: user.role,
+      }, token 
+  })
+};
 
 //updata password
 const updatePassword = async (req, res) => {
