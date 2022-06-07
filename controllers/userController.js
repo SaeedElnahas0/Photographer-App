@@ -256,6 +256,25 @@ const forgetPassword = async (req, res) => {
   }
 };
 
+//forget password
+const resetPassword = async (req, res) => {
+  const { newPassword, confirmPassword, email} = req.body;
+  if (!newPassword || !confirmPassword ) {
+      throw new CustomError.BadRequestError('Please provide all values');
+  }
+  const user = await User.findOne({ email });
+
+  if (req.body.newPassword !== req.body.confirmPassword) {
+    return res
+      .status(400)
+      .json({ msg: "Password Must be Match ConfirmPassword" });
+  }
+  user.password = newPassword;
+  await user.save();
+  res.status(StatusCodes.OK).json({msg: 'password reset success'})
+};
+
+
 //delete user
 const deleteUser = async (req, res) => {
   const user = await User.findByIdAndDelete({ _id: req.params.id });
@@ -270,5 +289,6 @@ module.exports = {
   updateProfile,
   updatePassword,
   forgetPassword,
+  resetPassword,
   deleteUser,
 };
