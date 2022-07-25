@@ -35,10 +35,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please provide age']
     },
-    gender: {
-        type: String,
-        enum: ['male', 'female'],
-    },
     country: {
         type: String,
         required: [true, 'Please provide country']
@@ -47,14 +43,26 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please provide state']
     },
-    fav: {
+    gender: {
         type: String,
-        required: [true, 'Please provide fav']
+        enum: ['Male', 'Female'],
+    },
+    job: {
+        type: String,
+        required: [true, 'Please provide job']
+    },
+    mobile: {
+        type: String,
+        required: [true, 'Please provide mobile']
+    },
+    address: {
+        type: String,
+        required: [true, 'Please provide address']
     },
     role: {
         type: String,
-        enum: ['photographer', 'user'],
-        default: 'user',
+        enum: ["0", "1"],
+        default: "0",
     },
     avatar: {
         public_id: {

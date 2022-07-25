@@ -18,10 +18,12 @@ const register = async (req, res) => {
           lastName: user.lastName,
           email: user.email,
           age: user.age,
-          gender: user.gender,
           country: user.country,
           state: user.state,
-          fav: user.fav,
+          gender: user.gender,
+          job: user.job,
+          mobile: user.mobile,
+          address: user.address,
           role: user.role,
           avatar: user.avatar,
         },
@@ -42,7 +44,9 @@ const register = async (req, res) => {
         gender: req.body.gender,
         country: req.body.country,
         state: req.body.state,
-        fav: req.body.fav,
+        job: req.body.job,
+        mobile: req.body.mobile,
+        address: req.body.address,
         role: req.body.role,
         avatar: {
           public_id: myCloud.public_id,
@@ -57,10 +61,12 @@ const register = async (req, res) => {
           lastName: user.lastName,
           email: user.email,
           age: user.age,
-          gender: user.gender,
           country: user.country,
           state: user.state,
-          fav: user.fav,
+          gender: user.gender,
+          job: user.job,
+          mobile: user.mobile,
+          address: user.address,
           role: user.role,
           avatar: user.avatar,
         },
@@ -94,12 +100,14 @@ const login = async (req, res) => {
       lastName: user.lastName,
       email: user.email,
       age: user.age,
-      gender: user.gender,
       country: user.country,
       state: user.state,
-      fav: user.fav,
+      gender: user.gender,
+      job: user.job,
+      mobile: user.mobile,
+      address: user.address,
       role: user.role,
-      avatar: user.avatar
+      avatar: user.avatar,
     },
     token,
   });
@@ -107,7 +115,7 @@ const login = async (req, res) => {
 
 //get all user
 const getAllUsers = async (req, res) => {
-  const users = await User.find({ role: "user" });
+  const users = await User.find({});
   res.status(StatusCodes.OK).json({ count: users.length, users });
 };
 
@@ -167,9 +175,9 @@ const getSingleUser = async (req, res) => {
 
 //updata user data
 const updateProfile = async (req, res) => {
-  const { firstName, lastName, email, age, gender, country, state, fav, role } = req.body;
+  const { firstName, lastName, email, age, gender, country, state, job, mobile, address, role } = req.body;
   
-  if (!firstName || !lastName || !email || !age || !gender || !country || !state || !fav || !role) {
+  if (!firstName || !lastName || !email || !age || !country || !state || !gender || !job || !mobile || !address || !role) {
       throw new CustomError.BadRequestError('Please provide all values');
   }
   const user = await User.findOne(req.user._id);
@@ -182,27 +190,32 @@ const updateProfile = async (req, res) => {
   user.age = age;
   user.gender = gender;
   user.country = country;
-  user.state = state;
-  user.fav = fav;
+  user.state = state,
+  user.job = job;
+  user.mobile = mobile;
+  user.address = address;
   user.role = role;
 
   await user.save();
 
   const token = user.createJWT(user);
   res.status(StatusCodes.OK).json({
-      user: { 
-          id: user._id, 
-          firstName: user.firstName, 
-          lastName: user.lastName, 
-          email: user.email, 
-          age: user.age, 
-          gender: user.gender, 
-          country: user.country, 
-          state: user.state,
-          fav: user.fav,
-          role: user.role,
-          avatar: user.avatar
-      }, token 
+    user: {
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      age: user.age,
+      country: user.country,
+      state: user.state,
+      gender: user.gender,
+      job: user.job,
+      mobile: user.mobile,
+      address: user.address,
+      role: user.role,
+      avatar: user.avatar,
+    },
+    token,
   })
 };
 
